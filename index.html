@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+    
+    body {
+      background: linear-gradient(135deg, #f5f7fa 0%, #e4e9f2 100%);
+      color: #333;
+    }
+
+    nav {
+      background: rgba(76, 175, 80, 0.95);
+      backdrop-filter: blur(10px);
+      color: white;
+      padding: 1rem 2rem;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+    }
+    
+    .nav-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      margin-left: 2rem;
+      transition: opacity 0.2s;
+    }
+    
+    .nav-links a:hover {
+      opacity: 0.8;
+    }
+    
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(76, 175, 80, 0.2) 100%);
+      position: relative;
+      padding: 6rem 2rem;
+      text-align: center;
+    }
+
+    canvas {
+  width: 500px; /* Set the desired width */
+  height: 300px; /* Set the desired height */
+}
+
+    .chart-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* 2 charts in a row */
+  gap: 2rem; /* Spacing between the charts */
+  justify-items: center; /* Center the chart containers */
+  margin: 2rem auto; /* Add spacing around rows */
+  max-width: 1200px; /* Limit row width for better layout */
+}
+
+.chart-container {
+  flex: 1; /* Ensure the charts grow evenly */
+}
+
+@media (max-width: 768px) {
+  .chart-row {
+    grid-template-columns: 1fr; /* Stacks charts on smaller screens */
+  }
+}
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('/api/placeholder/1200/800') center/cover;
+      opacity: 0.1;
+      z-index: -1;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 4rem auto;
+      padding: 2rem;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      transition: transform 0.3s;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .stat-number {
+      font-size: 3rem;
+      font-weight: bold;
+      color: #4CAF50;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      color: #666;
+      font-size: 1.1rem;
+    }
+    
+    .product-showcase {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 4rem auto;
+      padding: 0 2rem;
+    }
+    
+    .product-card {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s;
+    }
+    
+    .product-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .chart-container {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 2rem;
+      margin: 2rem auto;
+      max-width: 800px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    .cta {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+    }
+
+    footer {
+      background: rgba(76, 175, 80, 0.95);
+      backdrop-filter: blur(10px);
+      color: white;
+      padding: 3rem 2rem;
+      margin-top: 4rem;
+    }
+    .video-container {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+  height: 0;
+  overflow: hidden;
+}
+
+.video-container iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+
+    .nutrition-table {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    .nutrition-table th {
+      background: #4CAF50;
+      color: white;
+      padding: 1rem;
+    }
+
+    .nutrition-table td {
+      padding: 1rem;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-content">
+      <h1>Diamond Biscuit</h1>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <h1 style="font-size: 3.5rem; color: #4CAF50; margin-bottom: 1.5rem">Healthy Snacking<br>Redefined</h1>
+    <p style="font-size: 1.4rem; color: #666; margin-bottom: 2rem">Taste, Nutrition, and Convenience in Every Bite</p>
+    <img src="diamond-biscuit.jpg" alt="Diamond Biscuit" style="border-radius: 16px; margin-bottom: 2rem; box-shadow: 0 8px 32px rgba(0,0,0,0.1); width: 500px; height: 500px; border-radius: 250px;">
+  </section>
+
+  <section id="stats" class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-number">97%</div>
+      <div class="stat-label">Customer Satisfaction</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">50+</div>
+      <div class="stat-label">Survey Taken</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">4.1</div>
+      <div class="stat-label">Average Rating</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">19</div>
+      <div class="stat-label">Avg Response Age</div>
+    </div>
+  </section>
+
+  <section class="product-showcase" id="products">
+    <div class="product-card">
+      <h3 style="margin-bottom: 1rem">Nutritional Ingredients</h3>
+      <p style="color: #666; margin-bottom: 1rem">Whole grains, chia seeds, flaxseeds, spirulina, natural sweeteners like honey and maple syrup.</p>
+    </div>
+    <div class="product-card">
+      <h3 style="margin-bottom: 1rem">Eco-Friendly Packaging</h3>
+      <p style="color: #666; margin-bottom: 1rem">Biodegradable and resealable pouches, ideal for on-the-go lifestyles.</p>
+    </div>
+    <div class="product-card">
+      <h3 style="margin-bottom: 1rem">Target Market</h3>
+      <p style="color: #666; margin-bottom: 1rem">Busy professionals and health-conscious individuals in urban areas.</p>
+    </div>
+  </section>
+
+  <section id="nutrition" style="padding: 4rem 2rem;">
+    <h2 style="text-align: center; color: #4CAF50; margin-bottom: 2rem">Nutrition Information</h2>
+    <div style="max-width: 800px; margin: 0 auto;">
+      <table class="nutrition-table">
+        <thead>
+          <tr>
+            <th>Per 50g</th>
+            <th>Energy</th>
+            <th>Protein</th>
+            <th>Fiber</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Diamond Biscuit</td>
+            <td>250 kcal</td>
+            <td>4g</td>
+            <td>2g</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="survey-insights">
+    <div class="chart-row">
+      <div class="chart-container">
+        <h2>Overall Quality Rating</h2>
+        <canvas id="qualityChart"></canvas>
+      </div>
+      <div class="chart-container">
+        <h2>Taste Comparison</h2>
+        <canvas id="tasteChart"></canvas>
+      </div>
+    </div>
+  
+    <div class="chart-row">
+      <div class="chart-container">
+        <h2>Pricing Feedback</h2>
+        <canvas id="pricingChart"></canvas>
+      </div>
+      <div class="chart-container">
+        <h2>Preferred Purchase Locations</h2>
+        <canvas id="purchaseChart"></canvas>
+      </div>
+    </div>
+  </section>
+  
+  <div class="video-container">
+    <iframe 
+        src="https://www.youtube.com/embed/YQOzHqFjDHE?si=Xm890u1TsaCSrlZj&amp;start=56" 
+        title="YouTube video player" 
+        frameborder="0" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+        allowfullscreen>
+    </iframe>
+</div>
+
+  <footer>
+    <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between;">
+      <div>
+        <h3>Contact Us</h3>
+        <p>Email: tanay.119182@stu.upes.ac.in</p>
+        <p>Phone: +91 7070170217</p>
+      </div>
+      <div>
+        <h3>Teammates:</h3>
+        <p>Anshi Agrawal</p>
+        <p>Devanshi Raghav</p>
+        <p>Hritvik Garg</p>
+        <p>Tanay Prabhakar</p>
+        <p>Hiral Mittal</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const surveyData = {
+      qualityRating: [0, 0, 5, 13, 19],
+      tasteComparison: [1, 1, 11, 10, 18],
+      pricing: { yes: 31, no: 10, maybe: 10 },
+      purchasePreference: { supermarkets: 10, online: 10, localMarkets: 26, other: 5 }
+    };
+
+    // Chart Configuration
+    const ctx1 = document.getElementById('qualityChart').getContext('2d');
+    new Chart(ctx1, {
+      type: 'bar',
+      data: {
+        labels: ['1', '2', '3', '4', '5'],
+        datasets: [{
+          label: 'Quality Rating',
+          data: surveyData.qualityRating,
+          backgroundColor: '#4CAF50'
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Customer Quality Ratings (1 = Poor, 5 = Excellent)'
+          }
+        }
+      }
+    });
+
+    const ctx2 = document.getElementById('tasteChart').getContext('2d');
+    new Chart(ctx2, {
+      type: 'line',
+      data: {
+        labels: ['1', '2', '3', '4', '5'],
+        datasets: [{
+          label: 'Taste Comparison',
+          data: surveyData.tasteComparison,
+          borderColor: '#4CAF50',
+          backgroundColor: 'rgba(76, 175, 80, 0.1)',
+          fill: true
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          title: {
+            display: true,
+            text: 'How Diamond Biscuit Compares in Taste'
+          }
+        }
+      }
+    });
+
+    const ctx3 = document.getElementById('pricingChart').getContext('2d');
+    new Chart(ctx3, {
+      type: 'doughnut',
+      data: {
+        labels: ['Yes', 'No', 'Maybe'],
+        datasets: [{
+          label: 'Pricing Feedback',
+          data: Object.values(surveyData.pricing),
+          backgroundColor: ['#4CAF50', '#FF5722', '#FFC107']
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Fair Pricing Feedback'
+          }
+        }
+      }
+    });
+
+    const ctx4 = document.getElementById('purchaseChart').getContext('2d');
+    new Chart(ctx4, {
+      type: 'pie',
+      data: {
+        labels: Object.keys(surveyData.purchasePreference),
+        datasets: [{
+          label: 'Purchase Preferences',
+          data: Object.values(surveyData.purchasePreference),
+          backgroundColor: ['#4CAF50', '#2196F3', '#FFC107', '#9C27B0']
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Preferred Purchase Locations'
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>
